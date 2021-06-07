@@ -21,6 +21,8 @@ class AuthServices {
   }
 
   Future<SignInSignUpResult> signIn(String email, String password) async {
+    String msg = '';
+
     try {
       UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
@@ -28,12 +30,12 @@ class AuthServices {
       return SignInSignUpResult(user: user);
     } on PlatformException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        msg = "Tidak dapat menemukan email ini.";
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        msg = "Email dan password tidak cocok.";
       }
+      return SignInSignUpResult(user: null, message: msg);
     } catch (err) {
-      String msg = '';
       if (err.code == 'user-not-found') {
         msg = "Tidak dapat menemukan email ini.";
       } else if (err.code == 'wrong-password') {

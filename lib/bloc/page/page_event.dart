@@ -12,3 +12,12 @@ class GoToSplashPage extends PageEvent {}
 class GoToLoginPage extends PageEvent {}
 
 class GoToMainPage extends PageEvent {}
+
+class GoToRegistrationPage extends PageEvent {
+  final RegistrationData registrationData;
+
+  GoToRegistrationPage(this.registrationData);
+
+  @override
+  List<Object> get props => [];
+}

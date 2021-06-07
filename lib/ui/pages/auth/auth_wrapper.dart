@@ -24,6 +24,8 @@ class AuthWrapper extends StatelessWidget {
             ? SplashPage()
             : (pageState is OnSignInPage)
                 ? SignInPage()
-                : MainPage());
+                : (pageState is OnRegistrationPage)
+                    ? SignUpPage()
+                    : MainPage());
   }
 }

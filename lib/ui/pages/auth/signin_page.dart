@@ -1,4 +1,5 @@
 import 'package:bwa_flutix/bloc/blocs.dart';
+import 'package:bwa_flutix/models/registration_data.dart';
 import 'package:bwa_flutix/services/services.dart';
 import 'package:bwa_flutix/shared/shared.dart';
 import 'package:email_validator/email_validator.dart';
@@ -15,8 +16,6 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  // TextEditingController textFieldEmail;
-  // TextEditingController textFieldPassword;
   final textFieldEmail = TextEditingController();
   final textFieldPassword = TextEditingController();
 
@@ -36,136 +35,149 @@ class _SignInPageState extends State<SignInPage> {
     context
         .read<ThemeBloc>()
         .add(ChangeTheme(ThemeData().copyWith(primaryColor: accentColor2)));
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        context.read<PageBloc>().add(GoToSplashPage());
+        return;
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-            child: ListView(children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 30),
-                    child: SizedBox(
-                      height: 70,
-                      child: Image.asset('assets/logo.png'),
-                    ),
-                  ),
-                  SizedBox(
+        body: Container(
+          padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+          child: ListView(children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 30),
+                  child: SizedBox(
                     height: 70,
+                    child: Image.asset('assets/logo.png'),
                   ),
-                  Text(
-                    "Welcome Back,\nExplorer!",
-                    style: blackTextFont.copyWith(
-                        height: 1.7, fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  TextField(
-                    controller: textFieldEmail,
-                    onChanged: (text) {
-                      setState(() {
-                        isEmailValid = EmailValidator.validate(text);
-                      });
-                    },
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        labelText: 'Email Address',
-                        hintText: 'Email Address'),
-                  ),
-                  SizedBox(
-                    height: 27,
-                  ),
-                  TextField(
-                    controller: textFieldPassword,
-                    onChanged: (text) {
-                      setState(() {
-                        isPasswordValid = text.length >= 6;
-                      });
-                    },
-                    obscureText: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        labelText: 'Password',
-                        hintText: 'Password'),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  Center(
-                    child: Container(
-                      height: 70,
-                      child: FloatingActionButton(
-                        elevation: 0.0,
-                        backgroundColor: isEmailValid && isPasswordValid
-                            ? mainColor
-                            : accentColor4,
-                        child: Container(
-                          child: Icon(Icons.arrow_forward_outlined),
-                        ),
-                        onPressed: isEmailValid &&
-                                isPasswordValid &&
-                                isSigninIn == false
-                            ? () async {
-                                setState(() {
-                                  isSigninIn = true;
-                                });
-                                SignInSignUpResult result = await AuthServices()
-                                    .signIn(textFieldEmail.text,
-                                        textFieldPassword.text);
-                                if (result.user == null) {
-                                  _showFlash(
-                                      duration: Duration(seconds: 2),
-                                      message: result.message);
-                                  setState(() {
-                                    isSigninIn = false;
-                                  });
-                                }
-                              }
-                            : null,
+                ),
+                SizedBox(
+                  height: 70,
+                ),
+                Text(
+                  "Welcome Back,\nExplorer!",
+                  style: blackTextFont.copyWith(
+                      height: 1.7, fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                TextField(
+                  controller: textFieldEmail,
+                  onChanged: (text) {
+                    setState(() {
+                      isEmailValid = EmailValidator.validate(text);
+                    });
+                  },
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      labelText: 'Email Address',
+                      hintText: 'Email Address'),
+                ),
+                SizedBox(
+                  height: 27,
+                ),
+                TextField(
+                  controller: textFieldPassword,
+                  onChanged: (text) {
+                    setState(() {
+                      isPasswordValid = text.length >= 6;
+                    });
+                  },
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      labelText: 'Password',
+                      hintText: 'Password'),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Center(
+                  child: Container(
+                    height: 70,
+                    child: FloatingActionButton(
+                      elevation: 0.0,
+                      backgroundColor: isEmailValid && isPasswordValid
+                          ? mainColor
+                          : accentColor4,
+                      child: Container(
+                        child: Icon(Icons.arrow_forward_outlined),
+                      ),
+                      onPressed:
+                          isEmailValid && isPasswordValid && isSigninIn == false
+                              ? () async {
+                                  setState(() {
+                                    isSigninIn = true;
+                                  });
+                                  SignInSignUpResult result =
+                                      await AuthServices().signIn(
+                                          textFieldEmail.text,
+                                          textFieldPassword.text);
+                                  if (result.user == null) {
+                                    _showFlash(
+                                        duration: Duration(seconds: 2),
+                                        message: result.message);
+                                    setState(() {
+                                      isSigninIn = false;
+                                    });
+                                  }
+                                }
+                              : null,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 50),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Start fresh now?',
-                          style: greyTextFont.copyWith(
-                              fontSize: 14, fontWeight: FontWeight.w300),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 50),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Start fresh now?',
+                        style: greyTextFont.copyWith(
+                            fontSize: 14, fontWeight: FontWeight.w300),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .read<PageBloc>()
+                              .add(GoToRegistrationPage(RegistrationData()));
+                        },
+                        child: Text(
                           'Sign up',
                           style: purpleTextFont.copyWith(
                               fontSize: 14, fontWeight: FontWeight.w600),
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ]),
-          ),
-        ));
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 
-  void _showFlash(
-      {Duration duration,
-      flashStyle = FlashBehavior.floating,
-      String message}) {
+  void _showFlash({
+    Duration duration,
+    flashStyle = FlashBehavior.floating,
+    String message,
+  }) {
     showFlash(
       context: context,
       duration: duration,

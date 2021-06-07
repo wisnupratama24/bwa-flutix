@@ -14,3 +14,12 @@ class OnSignInPage extends PageState {}
 class OnSplashPage extends PageState {}
 
 class OnMainPage extends PageState {}
+
+class OnRegistrationPage extends PageState {
+  final RegistrationData registrationData;
+
+  OnRegistrationPage(this.registrationData);
+
+  @override
+  List<Object> get props => [];
+}
