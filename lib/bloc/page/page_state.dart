@@ -21,5 +21,17 @@ class OnRegistrationPage extends PageState {
   OnRegistrationPage(this.registrationData);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [registrationData];
+}
+
+class OnPreferencePage extends PageState {
+  final RegistrationData registrationData;
+
+  OnPreferencePage(this.registrationData);
+}
+
+class OnAccounConfirmationPage extends PageState {
+  final RegistrationData registrationData;
+
+  OnAccounConfirmationPage(this.registrationData);
 }

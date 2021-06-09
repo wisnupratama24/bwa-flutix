@@ -20,6 +20,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield UserLoaded(userModel);
     } else if (event is SignOut) {
       yield UserInitial();
+    } else if (event is UpdateData) {
+      UserModel updateUser = (state as UserLoaded)
+          .user
+          .copyWith(name: event.name, profile: event.profile);
+      yield UserLoaded(updateUser);
     }
   }
 }

@@ -16,49 +16,59 @@ class MoviePage extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<UserBloc, UserState>(
-                builder: (_, userState) => (userState is UserLoaded)
-                    ? Container(
-                        child: Row(
-                          children: [
-                            ProfileUser(
-                              user: userState.user,
+            BlocBuilder<UserBloc, UserState>(builder: (_, userState) {
+              if (userState is UserLoaded) {
+                if (imageFileToUpload != null) {
+                  uploadImage(imageFileToUpload).then((String downloadUrl) {
+                    print("download $downloadUrl");
+                    imageFileToUpload = null;
+                    context
+                        .read<UserBloc>()
+                        .add(UpdateData(profile: downloadUrl));
+                  });
+                }
+                return Container(
+                  child: Row(
+                    children: [
+                      ProfileUser(
+                        user: userState.user,
+                      ),
+                      SizedBox(
+                        width: defaultMargin,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            child: Text(
+                              userState.user.name.capitalize(),
+                              style: whiteTextFont.copyWith(fontSize: 18),
+                              maxLines: 1,
+                              overflow: TextOverflow.visible,
                             ),
-                            SizedBox(
-                              width: defaultMargin,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.6,
-                                  child: Text(
-                                    userState.user.name.capitalize(),
-                                    style: whiteTextFont.copyWith(fontSize: 18),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.visible,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  NumberFormat.currency(
-                                          symbol: 'IDR ',
-                                          locale: 'id_ID',
-                                          decimalDigits: 0)
-                                      .format(userState.user.balance),
-                                  style: yellowNumberFont.copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            NumberFormat.currency(
+                                    symbol: 'IDR ',
+                                    locale: 'id_ID',
+                                    decimalDigits: 0)
+                                .format(userState.user.balance),
+                            style: yellowNumberFont.copyWith(
+                                fontSize: 14, fontWeight: FontWeight.w400),
+                          )
+                        ],
                       )
-                    : LoadWidget())
+                    ],
+                  ),
+                );
+              } else {
+                return LoadWidget();
+              }
+            })
           ],
         ),
       ),
@@ -75,6 +85,7 @@ class ProfileUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(user.email);
     return Container(
       width: 60,
       height: 60,
@@ -83,11 +94,12 @@ class ProfileUser extends StatelessWidget {
           shape: BoxShape.circle, border: Border.all(color: Color(0xFf5F558B))),
       child: Container(
         decoration: BoxDecoration(
+            shape: BoxShape.circle,
             image: DecorationImage(
                 fit: BoxFit.cover,
                 image: user.profile == null
                     ? AssetImage('assets/user_pic.png')
-                    : AssetImage('assets/user_pic.png'))),
+                    : NetworkImage(user.profile))),
       ),
     );
   }

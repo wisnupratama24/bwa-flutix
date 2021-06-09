@@ -25,7 +25,17 @@ class AuthWrapper extends StatelessWidget {
             : (pageState is OnSignInPage)
                 ? SignInPage()
                 : (pageState is OnRegistrationPage)
-                    ? SignUpPage()
-                    : MainPage());
+                    ? SignUpPage(
+                        registrationData: pageState.registrationData,
+                      )
+                    : (pageState is OnPreferencePage)
+                        ? PreferencePage(
+                            registrationData: pageState.registrationData,
+                          )
+                        : (pageState is OnAccounConfirmationPage)
+                            ? AccountConfirmationPage(
+                                registrationData: pageState.registrationData,
+                              )
+                            : MainPage());
   }
 }

@@ -10,6 +10,7 @@ Color accentColor3 = Color(0xFFADADAD);
 Color accentColor4 = Color(0xFFE4E4E4);
 Color pinkColor = Color(0xFFFF5C83);
 Color greyHomeColor = Color(0xFFF6F7F9);
+Color greenButtonColor = Color(0xFF3E9D9D);
 
 TextStyle blackTextFont = GoogleFonts.raleway()
     .copyWith(color: Colors.black, fontWeight: FontWeight.w500);

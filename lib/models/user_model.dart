@@ -41,6 +41,15 @@ class UserModel extends Equatable {
     };
   }
 
+  UserModel copyWith({String name, String profile, String balance}) =>
+      UserModel(
+          name: this.name ?? name,
+          language: language,
+          genre: genre,
+          email: email,
+          profile: this.profile ?? profile,
+          balance: this.balance);
+
   @override
   String toString() {
     return "$id - $name - $email";

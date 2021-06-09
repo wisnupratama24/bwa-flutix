@@ -3,34 +3,33 @@ import 'dart:io';
 import 'package:bwa_flutix/bloc/blocs.dart';
 import 'package:bwa_flutix/models/registration_data.dart';
 import 'package:bwa_flutix/shared/shared.dart';
-import 'package:bwa_flutix/utils/utils.dart';
+import 'package:bwa_flutix/ui/widgets/widgets.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({key}) : super(key: key);
+  final RegistrationData registrationData;
+  SignUpPage({key, this.registrationData}) : super(key: key);
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  RegistrationData registrationData = RegistrationData();
-
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final nameController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    if (registrationData != null) {
-      emailController.text = registrationData.email;
-      nameController.text = registrationData.name;
+    if (widget.registrationData != null) {
+      emailController.text = widget.registrationData.email;
+      nameController.text = widget.registrationData.name;
     }
   }
 
@@ -49,32 +48,10 @@ class _SignUpPageState extends State<SignUpPage> {
             children: [
               Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 20, bottom: 22),
-                    height: 56,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () {
-                              context.read<PageBloc>().add(GoToLoginPage());
-                            },
-                            child: Icon(
-                              Icons.arrow_back,
-                              size: 28,
-                            ),
-                          ),
-                        ),
-                        Center(
-                            child: Text(
-                          "Create New\nYour Account",
-                          textAlign: TextAlign.center,
-                          style: blackTextFont.copyWith(
-                              fontSize: 20, fontWeight: FontWeight.w500),
-                        ))
-                      ],
-                    ),
+                  CenterBackAndTitle(
+                    text: "Create New\nYour Account",
+                    onTap: () =>
+                        {context.read<PageBloc>().add(GoToLoginPage())},
                   ),
                   Container(
                     width: 90,
@@ -86,22 +63,23 @@ class _SignUpPageState extends State<SignUpPage> {
                               shape: BoxShape.circle,
                               image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: registrationData?.profile == null
+                                  image: widget.registrationData.profile == null
                                       ? AssetImage(defaultUserPict)
-                                      : FileImage(registrationData.profile))),
+                                      : FileImage(
+                                          widget.registrationData.profile))),
                         ),
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: GestureDetector(
                             onTap: () async {
-                              if (registrationData.profile == null) {
+                              if (widget.registrationData.profile == null) {
                                 File pathImage = await getImage();
                                 setState(() {
-                                  registrationData.profile = pathImage;
+                                  widget.registrationData.profile = pathImage;
                                 });
                               } else {
                                 setState(() {
-                                  registrationData.profile = null;
+                                  widget.registrationData.profile = null;
                                 });
                               }
                             },
@@ -110,7 +88,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               height: 28,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: registrationData?.profile == null
+                                      image: widget.registrationData?.profile ==
+                                              null
                                           ? AssetImage(btnAddPhoto)
                                           : AssetImage(btnDelPhoto))),
                             ),
@@ -206,11 +185,16 @@ class _SignUpPageState extends State<SignUpPage> {
                           message: "Password don't match",
                           duration: Duration(seconds: 2));
                     } else {
-                      setState(() {
-                        registrationData.email = emailController.text;
-                        registrationData.password = passwordController.text;
-                        registrationData.name = nameController.text;
-                      });
+                      imageFileToUpload = widget.registrationData.profile;
+
+                      widget.registrationData.email = emailController.text;
+                      widget.registrationData.name = nameController.text;
+                      widget.registrationData.password =
+                          passwordController.text;
+
+                      context
+                          .read<PageBloc>()
+                          .add(GoToPreferencePage(widget.registrationData));
                     }
                   },
                 ),

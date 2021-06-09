@@ -17,3 +17,10 @@ class LoadUser extends UserEvent {
 }
 
 class SignOut extends UserEvent {}
+
+class UpdateData extends UserEvent {
+  final String profile;
+  final String name;
+
+  UpdateData({this.profile, this.name});
+}
